@@ -177,6 +177,11 @@ namespace ChinookApp.Repositories
         /// Retrieves the count of customers in each country, ordered by count descending.
         /// </summary>
         /// <returns>A list of CustomerCountry objects containing country names and customer counts.</returns>
+        /// <summary>
+        /// Retrieves the count of customers in each country, ordered by count descending.
+        /// This method handles potential NULL values in the Country field.
+        /// </summary>
+        /// <returns>A list of CustomerCountry objects containing country names (or "Unknown" for NULL) and customer counts.</returns>
         public List<CustomerCountry> GetCustomerCountByCountry()
         {
             var customerCountries = new List<CustomerCountry>();
@@ -184,7 +189,10 @@ namespace ChinookApp.Repositories
             {
                 connection.Open();
                 var command = new SqlCommand(
-                    "SELECT Country, COUNT(*) as CustomerCount FROM Customer GROUP BY Country ORDER BY CustomerCount DESC",
+                    @"SELECT COALESCE(Country, 'Unknown') as Country, COUNT(*) as CustomerCount 
+              FROM Customer 
+              GROUP BY Country 
+              ORDER BY CustomerCount DESC",
                     connection);
                 using (var reader = command.ExecuteReader())
                 {
@@ -192,7 +200,7 @@ namespace ChinookApp.Repositories
                     {
                         customerCountries.Add(new CustomerCountry
                         {
-                            Country = reader.GetString(0),
+                            Country = reader.GetString(0),  // This will always be a string, either the country name or "Unknown"
                             CustomerCount = reader.GetInt32(1)
                         });
                     }

@@ -169,7 +169,12 @@ namespace ChinookApp
             // Display matching customers
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"Customer ID:{customer.Id}");
+                Console.WriteLine($"Customer name: {customer.FirstName} {customer.LastName}");
+                Console.WriteLine($"Email: {customer.Email}");
+                Console.WriteLine($"Country: {customer.Country}");
+                Console.WriteLine($"Postal Code: {customer.PostalCode}");
+                Console.WriteLine($"Phone: {customer.Phone}");
             }
         }
 
@@ -264,14 +269,32 @@ namespace ChinookApp
 
         /// <summary>
         /// Displays the count of customers in each country, ordered by count descending.
+        /// This method:
+        /// 1. Retrieves the customer count by country from the repository.
+        /// 2. Displays each country and its corresponding customer count in descending order.
+        /// </summary>
+        /// <param name="repository">The customer repository used to retrieve customer data</param>
+        /// <summary>
+        /// Displays the count of customers in each country, ordered by count descending.
+        /// This method:
+        /// 1. Retrieves the customer count by country from the repository.
+        /// 2. Displays each country (or "Unknown" for NULL values) and its corresponding customer count in descending order.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void CustomerCountByCountry(ICustomerRepository repository)
         {
+            // Retrieve customer count by country
             var customerCountries = repository.GetCustomerCountByCountry();
+
+            // Display header
+            Console.WriteLine("\nCustomer Count by Country (Descending Order):");
+            Console.WriteLine("Country                 | Customer Count");
+            Console.WriteLine(new string('-', 40));  // Separator line
+
+            // Display each country and its customer count
             foreach (var cc in customerCountries)
             {
-                Console.WriteLine($"{cc.Country}: {cc.CustomerCount}");
+                Console.WriteLine($"{cc.Country,-22} | {cc.CustomerCount,5}");
             }
         }
 
