@@ -91,7 +91,7 @@ namespace ChinookApp
         /// <summary>
         /// Lists all customers in the database. This method:
         /// 1. Retrieves all customers from the repository.
-        /// 2. Displays each customer's ID, name, and email.
+        /// 2. Displays each customer's ID, first name, last name, country, postal code, phone number, and email.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void ListAllCustomers(ICustomerRepository repository)
@@ -99,10 +99,19 @@ namespace ChinookApp
             // Retrieve all customers
             var customers = repository.GetAllCustomers();
 
+            // Display header
+            Console.WriteLine("\nAll Customers:\n");
+
             // Display each customer's information
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"Customer ID:{customer.Id}");
+                Console.WriteLine($"Customer name: {customer.FirstName} {customer.LastName}");
+                Console.WriteLine($"Email: {customer.Email}");
+                Console.WriteLine($"Country: {customer.Country}");
+                Console.WriteLine($"Postal Code: {customer.PostalCode}");
+                Console.WriteLine($"Phone: {customer.Phone}");
+                Console.WriteLine(new string('-', 80));  // Separator line between entries
             }
         }
 
