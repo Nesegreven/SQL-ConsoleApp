@@ -87,7 +87,6 @@ namespace ChinookApp
                 }
             }
         }
-
         /// <summary>
         /// Lists all customers in the database. This method:
         /// 1. Retrieves all customers from the repository.
@@ -100,19 +99,20 @@ namespace ChinookApp
             var customers = repository.GetAllCustomers();
 
             // Display header
-            Console.WriteLine("\nAll Customers:\n");
+            Console.WriteLine("\nAll Customers:");
+            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine(new string('-', 100));  // Separator line
 
             // Display each customer's information
             foreach (var customer in customers)
             {
-                Console.WriteLine($"Customer ID:{customer.Id}");
-                Console.WriteLine($"Customer name: {customer.FirstName} {customer.LastName}");
-                Console.WriteLine($"Email: {customer.Email}");
-                Console.WriteLine($"Country: {customer.Country}");
-                Console.WriteLine($"Postal Code: {customer.PostalCode}");
-                Console.WriteLine($"Phone: {customer.Phone}");
-                Console.WriteLine(new string('-', 80));  // Separator line between entries
+                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
+                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
+                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
             }
+
+            // Display total count
+            Console.WriteLine($"\nTotal customers: {customers.Count}");
         }
 
         /// <summary>
