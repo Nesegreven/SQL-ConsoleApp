@@ -307,7 +307,9 @@ namespace ChinookApp
             var topSpenders = repository.GetTopSpenders();
             foreach (var spender in topSpenders)
             {
-                Console.WriteLine($"{spender.CustomerName}: {spender.TotalSpent:C}");
+                Console.WriteLine($"Customer ID: {spender.CustomerId,-10} Customer name: {spender.CustomerName,-25} Amount spent: {spender.TotalSpent,-10:C}");
+
+
             }
         }
 
@@ -336,10 +338,16 @@ namespace ChinookApp
 
         /// <summary>
         /// Retrieves and displays a page of customers from the database.
+        /// This method:
+        /// 1. Prompts the user to enter the page size (limit) and page number.
+        /// 2. Calculates the offset based on the page number and limit.
+        /// 3. Retrieves the specified page of customers from the repository.
+        /// 4. Displays the customer information for the retrieved page, including all relevant fields.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void GetCustomerPage(ICustomerRepository repository)
         {
+            // Prompt for page size
             Console.Write("Enter page size (limit): ");
             if (!int.TryParse(Console.ReadLine(), out int limit))
             {
@@ -347,6 +355,7 @@ namespace ChinookApp
                 return;
             }
 
+            // Prompt for page number
             Console.Write("Enter page number: ");
             if (!int.TryParse(Console.ReadLine(), out int page))
             {
@@ -354,14 +363,25 @@ namespace ChinookApp
                 return;
             }
 
+            // Calculate offset
             int offset = (page - 1) * limit;
+
+            // Retrieve the specified page of customers
             var customers = repository.GetCustomerPage(limit, offset);
 
+            // Display results
             Console.WriteLine($"\nPage {page} (Limit: {limit}, Offset: {offset})");
+            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine(new string('-', 100));  // Separator line
+
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
+                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
+                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
             }
+
+            Console.WriteLine($"\nShowing {customers.Count} customers on page {page}");
         }
     }
 }
