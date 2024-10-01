@@ -8,7 +8,7 @@ namespace ChinookApp.Repositories
     /// <summary>
     /// Implements the ICustomerRepository interface to perform customer-related database operations.
     /// This class is responsible for all data access operations related to customers in the Chinook database.
-    /// It uses ADO.NET with SqlClient to interact with the SQL Server database.
+    /// It uses SqlClient to interact with the SQL Server database.
     /// </summary>
     public class CustomerRepository : ICustomerRepository
     {
