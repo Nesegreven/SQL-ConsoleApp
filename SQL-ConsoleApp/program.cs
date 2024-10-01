@@ -18,8 +18,8 @@ namespace ChinookApp
         static void Main(string[] args)
         {
             // Set up configuration
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
+            var configuration = new ConfigurationBuilder() 
+                .AddJsonFile("appsettings.json")//make sure to set the build action for content and copy always
                 .Build();
 
             // Set up dependency injection
