@@ -102,7 +102,7 @@ namespace ChinookApp
             // Display each customer's information
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.CustomerId}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
             }
         }
 
@@ -123,7 +123,11 @@ namespace ChinookApp
                 if (customer != null)
                 {
                     // Customer found, display information
-                    Console.WriteLine($"Customer found: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                    Console.WriteLine($"Customer found: {customer.FirstName} {customer.LastName}");
+                    Console.WriteLine($"Email: {customer.Email}");
+                    Console.WriteLine($"Country: {customer.Country}");
+                    Console.WriteLine($"Postal Code: {customer.PostalCode}");
+                    Console.WriteLine($"Phone: {customer.Phone}");
                 }
                 else
                 {
@@ -156,7 +160,7 @@ namespace ChinookApp
             // Display matching customers
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.CustomerId}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
             }
         }
 
@@ -178,6 +182,12 @@ namespace ChinookApp
             customer.LastName = Console.ReadLine();
             Console.Write("Email: ");
             customer.Email = Console.ReadLine();
+            Console.Write("Country: ");
+            customer.Country = Console.ReadLine();
+            Console.Write("Postal Code: ");
+            customer.PostalCode = Console.ReadLine();
+            Console.Write("Phone: ");
+            customer.Phone = Console.ReadLine();
 
             // Add the new customer to the database
             var id = repository.AddCustomer(customer);
@@ -214,6 +224,18 @@ namespace ChinookApp
                     input = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(input)) customer.Email = input;
 
+                    Console.Write($"New Country ({customer.Country}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.Country = input;
+
+                    Console.Write($"New Postal Code ({customer.PostalCode}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.PostalCode = input;
+
+                    Console.Write($"New Phone ({customer.Phone}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.Phone = input;
+
                     // Update the customer in the database
                     repository.UpdateCustomer(customer);
                     Console.WriteLine("Customer updated successfully.");
@@ -232,17 +254,12 @@ namespace ChinookApp
         }
 
         /// <summary>
-        /// Displays the count of customers in each country, ordered by count descending. This method:
-        /// 1. Retrieves the customer count by country from the repository.
-        /// 2. Displays the country name and customer count for each country.
+        /// Displays the count of customers in each country, ordered by count descending.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void CustomerCountByCountry(ICustomerRepository repository)
         {
-            // Retrieve customer count by country
             var customerCountries = repository.GetCustomerCountByCountry();
-
-            // Display results
             foreach (var cc in customerCountries)
             {
                 Console.WriteLine($"{cc.Country}: {cc.CustomerCount}");
@@ -250,17 +267,12 @@ namespace ChinookApp
         }
 
         /// <summary>
-        /// Displays the top spenders among customers, ordered by total spent descending. This method:
-        /// 1. Retrieves the top spenders from the repository.
-        /// 2. Displays each customer's name and total amount spent.
+        /// Displays the top spenders among customers, ordered by total spent descending.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void TopSpenders(ICustomerRepository repository)
         {
-            // Retrieve top spenders
             var topSpenders = repository.GetTopSpenders();
-
-            // Display results
             foreach (var spender in topSpenders)
             {
                 Console.WriteLine($"{spender.CustomerName}: {spender.TotalSpent:C}");
@@ -268,10 +280,7 @@ namespace ChinookApp
         }
 
         /// <summary>
-        /// Displays the most popular genre(s) for a specific customer. This method:
-        /// 1. Prompts the user to enter a customer ID.
-        /// 2. Retrieves the most popular genre(s) for the specified customer.
-        /// 3. Displays the customer's name, their most popular genre(s), and the number of purchases in that genre.
+        /// Displays the most popular genre(s) for a specific customer.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void MostPopularGenreForCustomer(ICustomerRepository repository)
@@ -279,10 +288,7 @@ namespace ChinookApp
             Console.Write("Enter customer ID: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
-                // Retrieve popular genres for the customer
                 var popularGenres = repository.GetMostPopularGenreForCustomer(id);
-
-                // Display results
                 foreach (var genre in popularGenres)
                 {
                     Console.WriteLine($"Customer: {genre.CustomerName}");
@@ -292,22 +298,16 @@ namespace ChinookApp
             }
             else
             {
-                // Invalid input
                 Console.WriteLine("Invalid ID. Please enter a number.");
             }
         }
 
         /// <summary>
-        /// Retrieves and displays a page of customers from the database. This method:
-        /// 1. Prompts the user to enter the page size (limit) and page number.
-        /// 2. Calculates the offset based on the page number and limit.
-        /// 3. Retrieves the specified page of customers from the repository.
-        /// 4. Displays the customer information for the retrieved page.
+        /// Retrieves and displays a page of customers from the database.
         /// </summary>
         /// <param name="repository">The customer repository used to retrieve customer data</param>
         static void GetCustomerPage(ICustomerRepository repository)
         {
-            // Prompt for page size
             Console.Write("Enter page size (limit): ");
             if (!int.TryParse(Console.ReadLine(), out int limit))
             {
@@ -315,7 +315,6 @@ namespace ChinookApp
                 return;
             }
 
-            // Prompt for page number
             Console.Write("Enter page number: ");
             if (!int.TryParse(Console.ReadLine(), out int page))
             {
@@ -323,17 +322,13 @@ namespace ChinookApp
                 return;
             }
 
-            // Calculate offset
             int offset = (page - 1) * limit;
-
-            // Retrieve the specified page of customers
             var customers = repository.GetCustomerPage(limit, offset);
 
-            // Display results
             Console.WriteLine($"\nPage {page} (Limit: {limit}, Offset: {offset})");
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.CustomerId}: {customer.FirstName} {customer.LastName} - {customer.Email}");
+                Console.WriteLine($"{customer.Id}: {customer.FirstName} {customer.LastName} - {customer.Email}");
             }
         }
     }
