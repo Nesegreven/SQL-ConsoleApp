@@ -266,14 +266,6 @@ namespace ChinookApp
                 Console.WriteLine("Invalid ID. Please enter a number.");
             }
         }
-
-        /// <summary>
-        /// Displays the count of customers in each country, ordered by count descending.
-        /// This method:
-        /// 1. Retrieves the customer count by country from the repository.
-        /// 2. Displays each country and its corresponding customer count in descending order.
-        /// </summary>
-        /// <param name="repository">The customer repository used to retrieve customer data</param>
         /// <summary>
         /// Displays the count of customers in each country, ordered by count descending.
         /// This method:
