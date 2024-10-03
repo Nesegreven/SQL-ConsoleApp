@@ -23,7 +23,7 @@ namespace ChinookApp
             // Stores the connection string in a file so the string can be kept out of the source code repository, and easy for the user to add their own, 
             //although it is still included in this repository as the login to the server is handled by windows running a local server, so the string does not contain passwords or usernames
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json") //make sure to set the build action for content and copy always when testing the application with the included
+                .AddJsonFile("appsettings.json") //make sure to set the build action for content and copy always when testing the application with the included file
                 .Build();
 
             // Get connection string from configuration
