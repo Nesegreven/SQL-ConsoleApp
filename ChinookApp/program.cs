@@ -21,7 +21,7 @@ namespace ChinookApp
         {
             // Set up configuration 
             // Stores the connection string in a file so the string can be kept out of the source code repository, and easy for the user to add their own, 
-            //although it is still included in this repository as the login to the server is handled by windows running a local server, so the string does not contain passwords or usernames
+            // although it is still included in this repository as the login to the server is handled by windows running a local server, so the string does not contain passwords or usernames
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json") //make sure to set the build action for content and copy always when testing the application with the included file
                 .Build();
@@ -40,3 +40,5 @@ namespace ChinookApp
         }
     }
 }
+
+//note to self https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/documentation-comments
