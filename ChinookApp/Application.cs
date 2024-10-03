@@ -96,14 +96,14 @@ namespace ChinookApp
             var customers = _customerRepository.GetAllCustomers();
 
             Console.WriteLine("\nAll Customers:");
-            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine($"{"ID",-3} | {"First Name",-15} | {"Last Name",-15} | {"Country",-15} | {"Postal Code",-13} | {"Phone",-19} | {"Email"}");
             Console.WriteLine(new string('-', 100));
 
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
-                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
-                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
+                Console.WriteLine($"{customer.Id,-3} | {customer.FirstName,-15} | {customer.LastName,-15} | " +
+                                  $"{(customer.Country ?? "N/A"),-15} | {(customer.PostalCode ?? "N/A"),-13} | " +
+                                  $"{(customer.Phone ?? "N/A"),-19} | {customer.Email}");
             }
 
             Console.WriteLine($"\nTotal customers: {customers.Count}");
@@ -124,11 +124,12 @@ namespace ChinookApp
                 var customer = _customerRepository.GetCustomerById(id);
                 if (customer != null)
                 {
-                    Console.WriteLine($"Customer found: {customer.FirstName} {customer.LastName}");
-                    Console.WriteLine($"Email: {customer.Email}");
-                    Console.WriteLine($"Country: {customer.Country}");
-                    Console.WriteLine($"Postal Code: {customer.PostalCode}");
-                    Console.WriteLine($"Phone: {customer.Phone}");
+                    Console.WriteLine("\nCustomer Details:");
+                    Console.WriteLine($"{"ID",-3} | {"First Name",-15} | {"Last Name",-15} | {"Country",-15} | {"Postal Code",-13} | {"Phone",-19} | {"Email"}");
+                    Console.WriteLine(new string('-', 100));
+                    Console.WriteLine($"{customer.Id,-3} | {customer.FirstName,-15} | {customer.LastName,-15} | " +
+                                      $"{(customer.Country ?? "N/A"),-15} | {(customer.PostalCode ?? "N/A"),-13} | " +
+                                      $"{(customer.Phone ?? "N/A"),-19} | {customer.Email}");
                 }
                 else
                 {
@@ -154,17 +155,25 @@ namespace ChinookApp
             var name = Console.ReadLine();
             var customers = _customerRepository.GetCustomerByName(name);
 
-            foreach (var customer in customers)
+            if (customers.Any())
             {
-                Console.WriteLine($"Customer ID: {customer.Id}");
-                Console.WriteLine($"Name: {customer.FirstName} {customer.LastName}");
-                Console.WriteLine($"Email: {customer.Email}");
-                Console.WriteLine($"Country: {customer.Country}");
-                Console.WriteLine($"Postal Code: {customer.PostalCode}");
-                Console.WriteLine($"Phone: {customer.Phone}");
-                Console.WriteLine();
+                Console.WriteLine("\nMatching Customers:");
+                Console.WriteLine($"{"ID",-3} | {"First Name",-15} | {"Last Name",-15} | {"Country",-15} | {"Postal Code",-13} | {"Phone",-19} | {"Email"}");
+                Console.WriteLine(new string('-', 100));
+
+                foreach (var customer in customers)
+                {
+                    Console.WriteLine($"{customer.Id,-3} | {customer.FirstName,-15} | {customer.LastName,-15} | " +
+                                      $"{(customer.Country ?? "N/A"),-15} | {(customer.PostalCode ?? "N/A"),-13} | " +
+                                      $"{(customer.Phone ?? "N/A"),-19} | {customer.Email}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No customers found with that name.");
             }
         }
+
 
         /// <summary>
         /// Adds a new customer to the database.
@@ -338,7 +347,7 @@ namespace ChinookApp
             var customerCountries = _customerRepository.GetCustomerCountByCountry();
 
             Console.WriteLine("\nCustomer Count by Country (Descending Order):");
-            Console.WriteLine("Country                 | Customer Count");
+            Console.WriteLine($"{"Country",-25} | {"Customer Count",-15}");
             Console.WriteLine(new string('-', 40));
 
             foreach (var cc in customerCountries)
@@ -357,7 +366,7 @@ namespace ChinookApp
         {
             var topSpenders = _customerRepository.GetTopSpenders();
             Console.WriteLine("\nTop Spenders:");
-            Console.WriteLine("Customer ID | Customer Name                | Amount Spent");
+            Console.WriteLine($"{"Customer ID",-11} | {"Customer Name",-27} | {"Amount Spent",-12}");
             Console.WriteLine(new string('-', 60));
             foreach (var spender in topSpenders)
             {
@@ -434,17 +443,18 @@ namespace ChinookApp
             }
 
             Console.WriteLine($"\nPage {page} (Limit: {limit}, Offset: {offset})");
-            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine($"{"ID",-3} | {"First Name",-15} | {"Last Name",-15} | {"Country",-15} | {"Postal Code",-13} | {"Phone",-19} | {"Email"}");
             Console.WriteLine(new string('-', 100));
 
             foreach (var customer in customers)
             {
-                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
-                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
-                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
+                Console.WriteLine($"{customer.Id,-3} | {customer.FirstName,-15} | {customer.LastName,-15} | " +
+                                  $"{(customer.Country ?? "N/A"),-15} | {(customer.PostalCode ?? "N/A"),-13} | " +
+                                  $"{(customer.Phone ?? "N/A"),-19} | {customer.Email}");
             }
 
             Console.WriteLine($"\nShowing {customers.Count} customers on page {page}");
+
         }
     }
 }
