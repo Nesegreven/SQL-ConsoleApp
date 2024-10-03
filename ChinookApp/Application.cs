@@ -170,28 +170,63 @@ namespace ChinookApp
         /// Adds a new customer to the database.
         /// This method:
         /// 1. Prompts the user to enter customer details.
-        /// 2. Creates a new Customer object with the entered data.
-        /// 3. Adds the new customer to the database and displays the new customer's ID.
+        /// 2. Validates the input to ensure required fields are not null or empty.
+        /// 3. Creates a new Customer object with the entered data.
+        /// 4. Adds the new customer to the database and displays the new customer's ID.
         /// </summary>
         private void AddNewCustomer()
         {
             var customer = new Customer();
 
-            Console.Write("First Name: ");
-            customer.FirstName = Console.ReadLine();
-            Console.Write("Last Name: ");
-            customer.LastName = Console.ReadLine();
-            Console.Write("Email: ");
-            customer.Email = Console.ReadLine();
-            Console.Write("Country: ");
-            customer.Country = Console.ReadLine();
-            Console.Write("Postal Code: ");
-            customer.PostalCode = Console.ReadLine();
-            Console.Write("Phone: ");
-            customer.Phone = Console.ReadLine();
+            while (string.IsNullOrWhiteSpace(customer.FirstName))
+            {
+                Console.Write("First Name (required): ");
+                customer.FirstName = Console.ReadLine()?.Trim();
+                if (string.IsNullOrWhiteSpace(customer.FirstName))
+                {
+                    Console.WriteLine("First Name is required. Please enter a valid name.");
+                }
+            }
 
-            var id = _customerRepository.AddCustomer(customer);
-            Console.WriteLine($"New customer added with ID: {id}");
+            while (string.IsNullOrWhiteSpace(customer.LastName))
+            {
+                Console.Write("Last Name (required): ");
+                customer.LastName = Console.ReadLine()?.Trim();
+                if (string.IsNullOrWhiteSpace(customer.LastName))
+                {
+                    Console.WriteLine("Last Name is required. Please enter a valid name.");
+                }
+            }
+
+            while (string.IsNullOrWhiteSpace(customer.Email))
+            {
+                Console.Write("Email (required): ");
+                customer.Email = Console.ReadLine()?.Trim();
+                if (string.IsNullOrWhiteSpace(customer.Email))
+                {
+                    Console.WriteLine("Email is required. Please enter a valid email address.");
+                }
+                // Note: You might want to add email format validation here
+            }
+
+            Console.Write("Country (optional): ");
+            customer.Country = Console.ReadLine()?.Trim();
+
+            Console.Write("Postal Code (optional): ");
+            customer.PostalCode = Console.ReadLine()?.Trim();
+
+            Console.Write("Phone (optional): ");
+            customer.Phone = Console.ReadLine()?.Trim();
+
+            try
+            {
+                var id = _customerRepository.AddCustomer(customer);
+                Console.WriteLine($"New customer added with ID: {id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding customer: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -199,7 +234,7 @@ namespace ChinookApp
         /// This method:
         /// 1. Prompts the user to enter the ID of the customer to update.
         /// 2. Retrieves the customer with the given ID.
-        /// 3. If found, prompts for updated information and applies the changes.
+        /// 3. If found, prompts for updated information and applies the changes, ensuring required fields are not set to null.
         /// 4. If not found, displays a "not found" message.
         /// </summary>
         private void UpdateCustomer()
@@ -210,32 +245,72 @@ namespace ChinookApp
                 var customer = _customerRepository.GetCustomerById(id);
                 if (customer != null)
                 {
+                    bool isUpdated = false;
+
                     Console.Write($"New First Name ({customer.FirstName}): ");
-                    var input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.FirstName = input;
+                    var input = Console.ReadLine()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        customer.FirstName = input;
+                        isUpdated = true;
+                    }
 
                     Console.Write($"New Last Name ({customer.LastName}): ");
-                    input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.LastName = input;
+                    input = Console.ReadLine()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        customer.LastName = input;
+                        isUpdated = true;
+                    }
 
                     Console.Write($"New Email ({customer.Email}): ");
-                    input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.Email = input;
+                    input = Console.ReadLine()?.Trim();
+                    if (!string.IsNullOrWhiteSpace(input))
+                    {
+                        customer.Email = input;
+                        isUpdated = true;
+                    }
 
-                    Console.Write($"New Country ({customer.Country}): ");
-                    input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.Country = input;
+                    Console.Write($"New Country ({customer.Country ?? "N/A"}): ");
+                    input = Console.ReadLine()?.Trim();
+                    if (input != null)
+                    {
+                        customer.Country = string.IsNullOrWhiteSpace(input) ? null : input;
+                        isUpdated = true;
+                    }
 
-                    Console.Write($"New Postal Code ({customer.PostalCode}): ");
-                    input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.PostalCode = input;
+                    Console.Write($"New Postal Code ({customer.PostalCode ?? "N/A"}): ");
+                    input = Console.ReadLine()?.Trim();
+                    if (input != null)
+                    {
+                        customer.PostalCode = string.IsNullOrWhiteSpace(input) ? null : input;
+                        isUpdated = true;
+                    }
 
-                    Console.Write($"New Phone ({customer.Phone}): ");
-                    input = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(input)) customer.Phone = input;
+                    Console.Write($"New Phone ({customer.Phone ?? "N/A"}): ");
+                    input = Console.ReadLine()?.Trim();
+                    if (input != null)
+                    {
+                        customer.Phone = string.IsNullOrWhiteSpace(input) ? null : input;
+                        isUpdated = true;
+                    }
 
-                    _customerRepository.UpdateCustomer(customer);
-                    Console.WriteLine("Customer updated successfully.");
+                    if (isUpdated)
+                    {
+                        try
+                        {
+                            _customerRepository.UpdateCustomer(customer);
+                            Console.WriteLine("Customer updated successfully.");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error updating customer: {ex.Message}");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No changes were made to the customer.");
+                    }
                 }
                 else
                 {
