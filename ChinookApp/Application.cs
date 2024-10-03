@@ -171,8 +171,9 @@ namespace ChinookApp
         /// This method:
         /// 1. Prompts the user to enter customer details.
         /// 2. Validates the input to ensure required fields are not null or empty.
-        /// 3. Creates a new Customer object with the entered data.
-        /// 4. Adds the new customer to the database and displays the new customer's ID.
+        /// 3. Handles optional fields consistently, setting them to null if input is empty.
+        /// 4. Creates a new Customer object with the entered data.
+        /// 5. Adds the new customer to the database and displays the new customer's ID.
         /// </summary>
         private void AddNewCustomer()
         {
@@ -210,13 +211,16 @@ namespace ChinookApp
             }
 
             Console.Write("Country (optional): ");
-            customer.Country = Console.ReadLine()?.Trim();
+            var input = Console.ReadLine()?.Trim();
+            customer.Country = string.IsNullOrWhiteSpace(input) ? null : input;
 
             Console.Write("Postal Code (optional): ");
-            customer.PostalCode = Console.ReadLine()?.Trim();
+            input = Console.ReadLine()?.Trim();
+            customer.PostalCode = string.IsNullOrWhiteSpace(input) ? null : input;
 
             Console.Write("Phone (optional): ");
-            customer.Phone = Console.ReadLine()?.Trim();
+            input = Console.ReadLine()?.Trim();
+            customer.Phone = string.IsNullOrWhiteSpace(input) ? null : input;
 
             try
             {
@@ -391,28 +395,43 @@ namespace ChinookApp
         /// Retrieves and displays a page of customers from the database.
         /// This method:
         /// 1. Prompts the user to enter the page size (limit) and page number.
-        /// 2. Calculates the offset based on the page number and limit.
-        /// 3. Retrieves the specified page of customers from the repository.
-        /// 4. Displays the customer information for the retrieved page, including all relevant fields.
+        /// 2. Validates the input to ensure positive values for both limit and page number.
+        /// 3. Calculates the offset based on the page number and limit.
+        /// 4. Retrieves the specified page of customers from the repository.
+        /// 5. Displays the customer information for the retrieved page, including all relevant fields.
         /// </summary>
         private void GetCustomerPage()
         {
-            Console.Write("Enter page size (limit): ");
-            if (!int.TryParse(Console.ReadLine(), out int limit))
+            int limit;
+            while (true)
             {
-                Console.WriteLine("Invalid limit. Please enter a number.");
-                return;
+                Console.Write("Enter page size (limit): ");
+                if (int.TryParse(Console.ReadLine(), out limit) && limit > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Invalid input. Please enter a positive number for the page size.");
             }
 
-            Console.Write("Enter page number: ");
-            if (!int.TryParse(Console.ReadLine(), out int page))
+            int page;
+            while (true)
             {
-                Console.WriteLine("Invalid page number. Please enter a number.");
-                return;
+                Console.Write("Enter page number: ");
+                if (int.TryParse(Console.ReadLine(), out page) && page > 0)
+                {
+                    break;
+                }
+                Console.WriteLine("Invalid input. Please enter a positive number for the page number.");
             }
 
             int offset = (page - 1) * limit;
             var customers = _customerRepository.GetCustomerPage(limit, offset);
+
+            if (customers.Count == 0)
+            {
+                Console.WriteLine($"\nNo customers found on page {page}.");
+                return;
+            }
 
             Console.WriteLine($"\nPage {page} (Limit: {limit}, Offset: {offset})");
             Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
