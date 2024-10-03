@@ -7,7 +7,8 @@ namespace ChinookApp
 {
     /// <summary>
     /// The main application class that handles user interaction and business logic.
-    /// This class uses the CustomerRepository to perform operations on customer data.
+    /// This class is responsible for all data access operations related to customers in the Chinook database.
+    /// It uses the ICustomerRepository interface to perform customer-related database operations.
     /// </summary>
     public class Application
     {
@@ -24,6 +25,8 @@ namespace ChinookApp
 
         /// <summary>
         /// Runs the main application loop, presenting a menu to the user and handling their choices.
+        /// This method continuously displays options to the user and processes their input
+        /// until they choose to exit the application.
         /// </summary>
         public void Run()
         {
@@ -83,6 +86,10 @@ namespace ChinookApp
 
         /// <summary>
         /// Lists all customers in the database.
+        /// This method:
+        /// 1. Retrieves all customers from the repository.
+        /// 2. Displays each customer's ID, first name, last name, country, postal code, phone number, and email.
+        /// 3. Shows the total count of customers at the end.
         /// </summary>
         private void ListAllCustomers()
         {
@@ -104,6 +111,10 @@ namespace ChinookApp
 
         /// <summary>
         /// Finds a customer by their ID.
+        /// This method:
+        /// 1. Prompts the user to enter a customer ID.
+        /// 2. Attempts to retrieve the customer with the given ID.
+        /// 3. Displays the customer's information if found, or a "not found" message if not found.
         /// </summary>
         private void FindCustomerById()
         {
@@ -132,6 +143,10 @@ namespace ChinookApp
 
         /// <summary>
         /// Finds customers by their name.
+        /// This method:
+        /// 1. Prompts the user to enter a customer name.
+        /// 2. Searches for customers with matching names.
+        /// 3. Displays the information of all matching customers.
         /// </summary>
         private void FindCustomerByName()
         {
@@ -153,6 +168,10 @@ namespace ChinookApp
 
         /// <summary>
         /// Adds a new customer to the database.
+        /// This method:
+        /// 1. Prompts the user to enter customer details.
+        /// 2. Creates a new Customer object with the entered data.
+        /// 3. Adds the new customer to the database and displays the new customer's ID.
         /// </summary>
         private void AddNewCustomer()
         {
@@ -177,6 +196,11 @@ namespace ChinookApp
 
         /// <summary>
         /// Updates an existing customer in the database.
+        /// This method:
+        /// 1. Prompts the user to enter the ID of the customer to update.
+        /// 2. Retrieves the customer with the given ID.
+        /// 3. If found, prompts for updated information and applies the changes.
+        /// 4. If not found, displays a "not found" message.
         /// </summary>
         private void UpdateCustomer()
         {
@@ -226,6 +250,9 @@ namespace ChinookApp
 
         /// <summary>
         /// Displays the count of customers in each country.
+        /// This method:
+        /// 1. Retrieves the customer count by country from the repository.
+        /// 2. Displays each country and its corresponding customer count in descending order.
         /// </summary>
         private void CustomerCountByCountry()
         {
@@ -243,6 +270,9 @@ namespace ChinookApp
 
         /// <summary>
         /// Displays the top spenders among customers.
+        /// This method:
+        /// 1. Retrieves the list of top spenders from the repository.
+        /// 2. Displays each customer's ID, name, and total amount spent, sorted by spending in descending order.
         /// </summary>
         private void TopSpenders()
         {
@@ -257,7 +287,11 @@ namespace ChinookApp
         }
 
         /// <summary>
-        /// Displays the most popular genre for a specific customer.
+        /// Displays the most popular genre(s) for a specific customer.
+        /// This method:
+        /// 1. Prompts the user to enter a customer ID.
+        /// 2. Retrieves the most popular genre(s) for the specified customer.
+        /// 3. Displays the customer's name, the most popular genre(s), and the number of purchases in that genre.
         /// </summary>
         private void MostPopularGenreForCustomer()
         {
@@ -280,6 +314,11 @@ namespace ChinookApp
 
         /// <summary>
         /// Retrieves and displays a page of customers from the database.
+        /// This method:
+        /// 1. Prompts the user to enter the page size (limit) and page number.
+        /// 2. Calculates the offset based on the page number and limit.
+        /// 3. Retrieves the specified page of customers from the repository.
+        /// 4. Displays the customer information for the retrieved page, including all relevant fields.
         /// </summary>
         private void GetCustomerPage()
         {
