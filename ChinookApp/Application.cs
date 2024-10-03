@@ -1,0 +1,317 @@
+﻿using System;
+using System.Collections.Generic;
+using ChinookApp.Repositories;
+using ChinookApp.Models;
+
+namespace ChinookApp
+{
+    /// <summary>
+    /// The main application class that handles user interaction and business logic.
+    /// This class uses the CustomerRepository to perform operations on customer data.
+    /// </summary>
+    public class Application
+    {
+        private readonly ICustomerRepository _customerRepository;
+
+        /// <summary>
+        /// Initializes a new instance of the Application class.
+        /// </summary>
+        /// <param name="customerRepository">The customer repository to use for data operations.</param>
+        public Application(ICustomerRepository customerRepository)
+        {
+            _customerRepository = customerRepository;
+        }
+
+        /// <summary>
+        /// Runs the main application loop, presenting a menu to the user and handling their choices.
+        /// </summary>
+        public void Run()
+        {
+            while (true)
+            {
+                Console.WriteLine("\nChoose an operation:");
+                Console.WriteLine("1. List all customers");
+                Console.WriteLine("2. Find customer by ID");
+                Console.WriteLine("3. Find customer by name");
+                Console.WriteLine("4. Add new customer");
+                Console.WriteLine("5. Update customer");
+                Console.WriteLine("6. Customer count by country");
+                Console.WriteLine("7. Top spenders");
+                Console.WriteLine("8. Most popular genre for a customer");
+                Console.WriteLine("9. Get page of customers");
+                Console.WriteLine("10. Exit");
+
+                var choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ListAllCustomers();
+                        break;
+                    case "2":
+                        FindCustomerById();
+                        break;
+                    case "3":
+                        FindCustomerByName();
+                        break;
+                    case "4":
+                        AddNewCustomer();
+                        break;
+                    case "5":
+                        UpdateCustomer();
+                        break;
+                    case "6":
+                        CustomerCountByCountry();
+                        break;
+                    case "7":
+                        TopSpenders();
+                        break;
+                    case "8":
+                        MostPopularGenreForCustomer();
+                        break;
+                    case "9":
+                        GetCustomerPage();
+                        break;
+                    case "10":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Lists all customers in the database.
+        /// </summary>
+        private void ListAllCustomers()
+        {
+            var customers = _customerRepository.GetAllCustomers();
+
+            Console.WriteLine("\nAll Customers:");
+            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine(new string('-', 100));
+
+            foreach (var customer in customers)
+            {
+                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
+                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
+                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
+            }
+
+            Console.WriteLine($"\nTotal customers: {customers.Count}");
+        }
+
+        /// <summary>
+        /// Finds a customer by their ID.
+        /// </summary>
+        private void FindCustomerById()
+        {
+            Console.Write("Enter customer ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var customer = _customerRepository.GetCustomerById(id);
+                if (customer != null)
+                {
+                    Console.WriteLine($"Customer found: {customer.FirstName} {customer.LastName}");
+                    Console.WriteLine($"Email: {customer.Email}");
+                    Console.WriteLine($"Country: {customer.Country}");
+                    Console.WriteLine($"Postal Code: {customer.PostalCode}");
+                    Console.WriteLine($"Phone: {customer.Phone}");
+                }
+                else
+                {
+                    Console.WriteLine("Customer not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID. Please enter a number.");
+            }
+        }
+
+        /// <summary>
+        /// Finds customers by their name.
+        /// </summary>
+        private void FindCustomerByName()
+        {
+            Console.Write("Enter customer name: ");
+            var name = Console.ReadLine();
+            var customers = _customerRepository.GetCustomerByName(name);
+
+            foreach (var customer in customers)
+            {
+                Console.WriteLine($"Customer ID: {customer.Id}");
+                Console.WriteLine($"Name: {customer.FirstName} {customer.LastName}");
+                Console.WriteLine($"Email: {customer.Email}");
+                Console.WriteLine($"Country: {customer.Country}");
+                Console.WriteLine($"Postal Code: {customer.PostalCode}");
+                Console.WriteLine($"Phone: {customer.Phone}");
+                Console.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Adds a new customer to the database.
+        /// </summary>
+        private void AddNewCustomer()
+        {
+            var customer = new Customer();
+
+            Console.Write("First Name: ");
+            customer.FirstName = Console.ReadLine();
+            Console.Write("Last Name: ");
+            customer.LastName = Console.ReadLine();
+            Console.Write("Email: ");
+            customer.Email = Console.ReadLine();
+            Console.Write("Country: ");
+            customer.Country = Console.ReadLine();
+            Console.Write("Postal Code: ");
+            customer.PostalCode = Console.ReadLine();
+            Console.Write("Phone: ");
+            customer.Phone = Console.ReadLine();
+
+            var id = _customerRepository.AddCustomer(customer);
+            Console.WriteLine($"New customer added with ID: {id}");
+        }
+
+        /// <summary>
+        /// Updates an existing customer in the database.
+        /// </summary>
+        private void UpdateCustomer()
+        {
+            Console.Write("Enter customer ID to update: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var customer = _customerRepository.GetCustomerById(id);
+                if (customer != null)
+                {
+                    Console.Write($"New First Name ({customer.FirstName}): ");
+                    var input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.FirstName = input;
+
+                    Console.Write($"New Last Name ({customer.LastName}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.LastName = input;
+
+                    Console.Write($"New Email ({customer.Email}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.Email = input;
+
+                    Console.Write($"New Country ({customer.Country}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.Country = input;
+
+                    Console.Write($"New Postal Code ({customer.PostalCode}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.PostalCode = input;
+
+                    Console.Write($"New Phone ({customer.Phone}): ");
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input)) customer.Phone = input;
+
+                    _customerRepository.UpdateCustomer(customer);
+                    Console.WriteLine("Customer updated successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Customer not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID. Please enter a number.");
+            }
+        }
+
+        /// <summary>
+        /// Displays the count of customers in each country.
+        /// </summary>
+        private void CustomerCountByCountry()
+        {
+            var customerCountries = _customerRepository.GetCustomerCountByCountry();
+
+            Console.WriteLine("\nCustomer Count by Country (Descending Order):");
+            Console.WriteLine("Country                 | Customer Count");
+            Console.WriteLine(new string('-', 40));
+
+            foreach (var cc in customerCountries)
+            {
+                Console.WriteLine($"{cc.Country,-22} | {cc.CustomerCount,5}");
+            }
+        }
+
+        /// <summary>
+        /// Displays the top spenders among customers.
+        /// </summary>
+        private void TopSpenders()
+        {
+            var topSpenders = _customerRepository.GetTopSpenders();
+            Console.WriteLine("\nTop Spenders:");
+            Console.WriteLine("Customer ID | Customer Name                | Amount Spent");
+            Console.WriteLine(new string('-', 60));
+            foreach (var spender in topSpenders)
+            {
+                Console.WriteLine($"{spender.CustomerId,-11} | {spender.CustomerName,-27} | {spender.TotalSpent,-12:C}");
+            }
+        }
+
+        /// <summary>
+        /// Displays the most popular genre for a specific customer.
+        /// </summary>
+        private void MostPopularGenreForCustomer()
+        {
+            Console.Write("Enter customer ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var popularGenres = _customerRepository.GetMostPopularGenreForCustomer(id);
+                foreach (var genre in popularGenres)
+                {
+                    Console.WriteLine($"Customer: {genre.CustomerName}");
+                    Console.WriteLine($"Most popular genre: {genre.GenreName}");
+                    Console.WriteLine($"Purchases in this genre: {genre.PurchaseCount}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID. Please enter a number.");
+            }
+        }
+
+        /// <summary>
+        /// Retrieves and displays a page of customers from the database.
+        /// </summary>
+        private void GetCustomerPage()
+        {
+            Console.Write("Enter page size (limit): ");
+            if (!int.TryParse(Console.ReadLine(), out int limit))
+            {
+                Console.WriteLine("Invalid limit. Please enter a number.");
+                return;
+            }
+
+            Console.Write("Enter page number: ");
+            if (!int.TryParse(Console.ReadLine(), out int page))
+            {
+                Console.WriteLine("Invalid page number. Please enter a number.");
+                return;
+            }
+
+            int offset = (page - 1) * limit;
+            var customers = _customerRepository.GetCustomerPage(limit, offset);
+
+            Console.WriteLine($"\nPage {page} (Limit: {limit}, Offset: {offset})");
+            Console.WriteLine("ID | First Name     | Last Name      | Country        | Postal Code  | Phone              | Email");
+            Console.WriteLine(new string('-', 100));
+
+            foreach (var customer in customers)
+            {
+                Console.WriteLine($"{customer.Id,-3}| {customer.FirstName,-15}| {customer.LastName,-15}| " +
+                                  $"{(customer.Country ?? "N/A"),-15}| {(customer.PostalCode ?? "N/A"),-13}| " +
+                                  $"{(customer.Phone ?? "N/A"),-19}| {customer.Email}");
+            }
+
+            Console.WriteLine($"\nShowing {customers.Count} customers on page {page}");
+        }
+    }
+}
